@@ -11,16 +11,16 @@ module OssEmulator
   module Bucket
 
     # GetService=ListBuckets
-    def self.get_service(response) 
+    def self.get_service(response)
       Bucket.list_buckets(response)
     end
 
     # ListBuckets=GetService
-    def self.list_buckets(response) 
+    def self.list_buckets(response)
       body = ""
       xml = Builder::XmlMarkup.new(:target => body)
       xml.instruct! :xml, :version=>"1.0", :encoding=>"UTF-8"
-      xml.ListAllMyBucketsResult(:xmlns => HttpMsg::XMLNS) { |lam|
+      xml.ListAllMyBucketsResult() { |lam|
         lam.Owner { |owner|
           owner.ID("00220120222")
           owner.DisplayName("1390402650033793")
@@ -41,7 +41,7 @@ module OssEmulator
       }
 
       dataset = {
-        cmd: Request::LIST_BUCKETS, 
+        cmd: Request::LIST_BUCKETS,
         body: body
       }
       OssResponse.response_ok(response, dataset)
@@ -67,12 +67,12 @@ module OssEmulator
           f << YAML::dump(metadata)
         end
       end
-      
+
       OssResponse.response_ok(response, Request::PUT_BUCKET)
     end
 
     # PutBucketACL
-    def self.put_bucket_acl(response) 
+    def self.put_bucket_acl(response)
       OssResponse.response_ok(response)
     end
 
@@ -102,7 +102,7 @@ module OssEmulator
       }
 
       dataset = {
-        :cmd => Request::GET_BUCKET, 
+        :cmd => Request::GET_BUCKET,
         :body => body
       }
       OssResponse.response_ok(response, dataset)
@@ -116,7 +116,7 @@ module OssEmulator
       OssResponse.response_ok(response, Request::GET_BUCKET_ACL)
     end
 
-    # GetBucketLocation:  
+    # GetBucketLocation:
     def self.get_bucket_location(response)
       OssResponse.response_ok(response, Request::GET_BUCKET_LOCATION)
     end
