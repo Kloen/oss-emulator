@@ -10,7 +10,7 @@ module OssEmulator
   # Logging support
   # @example
   #   require 'logging'
-  #   Log.init() 
+  #   Log.init()
   #   Log.set_quiet_mode(false)
   #   Log.info("something", 'green')
   #   Log.fatal("something", 'red')
@@ -20,7 +20,7 @@ module OssEmulator
     LOG_DEFAULT_FILE = "#{LOG_DEFAULT_DIR}/emulator.log"
     LOG_TEST_FILE = "#{LOG_DEFAULT_DIR}/test.log"
     LOG_ALIYUN_SDK_FILE = "#{LOG_DEFAULT_DIR}/aliyun_sdk.log"
-    LOG_FILE_SHIFT_AGE  = 1000 
+    LOG_FILE_SHIFT_AGE  = 1000
     LOG_FILE_SHIFT_SIZE = 10 * 1024 * 1024
     LOG_LEVEL_DICT= { 'debug' => Logger::DEBUG, 'info' => Logger::INFO, 'warn' => Logger::WARN, 'error' => Logger::ERROR, 'fatal' => Logger::FATAL }
     LOG_LEVEL_HASH= { 0 => 'debug', 1 => 'info', 2 => 'warn', 3 => 'error', 4 => 'fatal' }
@@ -31,14 +31,21 @@ module OssEmulator
     def self.init(log_filename = nil)
       return if @@logger.is_a?(Logger)
 
-      log_filename = LOG_DEFAULT_FILE if log_filename.nil?
-      log_dir = File.dirname(log_filename)
-      FileUtils.mkdir_p(log_dir) unless File.exist?(log_dir)
-      
-      @@logger = Logger.new(log_filename, LOG_FILE_SHIFT_AGE, LOG_FILE_SHIFT_SIZE)
-      abort "Logger init failed . " if @@logger.nil?
-      @@logger.level = Logger::INFO
-      self.info("Logger init successfully : #{log_filename} \n")
+      if ENV['DOCKER_LOGS']
+        fd = IO.sysopen("/proc/1/fd/1","w")
+        io = IO.new(fd,"w")
+        io.sync = true
+        @@logger = Logger.new(io)
+      else
+        log_filename = LOG_DEFAULT_FILE if log_filename.nil?
+        log_dir = File.dirname(log_filename)
+        FileUtils.mkdir_p(log_dir) unless File.exist?(log_dir)
+
+        @@logger = Logger.new(log_filename, LOG_FILE_SHIFT_AGE, LOG_FILE_SHIFT_SIZE)
+        abort "Logger init failed . " if @@logger.nil?
+        @@logger.level = Logger::INFO
+        self.info("Logger init successfully : #{log_filename} \n")
+      end
     end
 
     def self.abort(str, color = 'red')
@@ -54,7 +61,7 @@ module OssEmulator
     end
 
     def self.last_error()
-      if $! 
+      if $!
         self.fatal($!, 'red_bg')
         $!.backtrace.each { |line| self.fatal(line, 'yellow') }
       end
@@ -92,7 +99,7 @@ module OssEmulator
       @@logger.debug(str)
       println(str, color) unless @@quiet_mode
     end
-    
+
     # level = Logger::DEBUG | Logger::INFO | Logger::WARN | Logger::ERROR | Logger::FATAL
     def self.set_log_level(level)
       if level.is_a?(String)
@@ -111,7 +118,7 @@ module OssEmulator
       LOG_LEVEL_HASH[@@logger.level]
     end
 
-    # mode = true | false 
+    # mode = true | false
     def self.set_quiet_mode(mode)
       @@quiet_mode = mode
     end
