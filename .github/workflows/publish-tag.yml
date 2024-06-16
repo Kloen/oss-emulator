@@ -1,7 +1,11 @@
-name: Docker Publish
+name: Docker Publish [TAG]
 
 on:
   workflow_dispatch:
+    inputs:
+      tag:
+        description: "Tag to create"
+        required: true
 
 jobs:
   docker:
@@ -23,4 +27,4 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           push: true
-          tags: kloen/oss-emulator:latest
+          tags: kloen/oss-emulator:${{ github.event.inputs.tag }}
