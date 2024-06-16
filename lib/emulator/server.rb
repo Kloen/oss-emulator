@@ -41,9 +41,9 @@ module OssEmulator
       when Request::GET_BUCKET  # =LIST_OBJECTS
         Bucket.get_bucket(req.bucket, req, response)
       when Request::GET_BUCKET_ACL
-        Bucket.get_bucetk_acl(req.bucket, response)
+        Bucket.get_bucket_acl(req.bucket, response)
       when Request::GET_BUCKET_INFO
-        Bucket.get_bucetk_info(req.bucket, response)
+        Bucket.get_bucket_info(req.bucket, response)
       when Request::GET_BUCKET_LOCATION
         Bucket.get_bucket_location(response)
       when Request::GET_BUCKET_LOGGING

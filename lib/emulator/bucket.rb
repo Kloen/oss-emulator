@@ -109,7 +109,7 @@ module OssEmulator
     end
 
     # GetBucketACL
-    def self.get_bucetk_acl(bucket, response)
+    def self.get_bucket_acl(bucket, response)
       # NoSuchBucket
       return if OssResponse.response_no_such_bucket(response, bucket)
 
@@ -122,7 +122,7 @@ module OssEmulator
     end
 
     # GetBucketInfo
-    def self.get_bucetk_info(bucket, response)
+    def self.get_bucket_info(bucket, response)
       # NoSuchBucket
       return if OssResponse.response_no_such_bucket(response, bucket)
 
