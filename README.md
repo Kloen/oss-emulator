@@ -1,5 +1,12 @@
 # Aliyun OSS Emulator
 
+## Setup
+Install required gems:
+```shell
+gem install thor builder webrick
+```
+
+> Original README:
 ## 关于
 - *oss-emulator* 轻量级的OSS服务模拟器，提供与OSS服务相同的API接口。
 
