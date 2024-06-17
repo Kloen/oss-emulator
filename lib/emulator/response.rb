@@ -3,7 +3,7 @@ require 'find'
 require 'time'
 require 'fileutils'
 require 'builder'
-require "rexml/document"  
+require "rexml/document"
 require 'emulator/config'
 require 'emulator/chunkfile'
 require 'emulator/util'
@@ -53,7 +53,7 @@ module OssEmulator
           </Error>
         eos
       end #case
-      
+
       Log.last_error()
     end #function
 
@@ -86,7 +86,7 @@ module OssEmulator
       object_dir = File.join(Config.store, dataset[:bucket], dataset[:object])
       object_content_filename = File.join(object_dir, Store::OBJECT_CONTENT)
 
-      if !dataset[:multipart] # single part, whole 
+      if !dataset[:multipart] # single part, whole
         if dataset.include?('Content-Range') # single part with range
           Log.debug("response_get_object_by_chunk : request_id=#{request_id} : single part with Range", 'blue')
           response.status = 206
@@ -100,7 +100,7 @@ module OssEmulator
           options = { type: 'single_whole' }
           response.body = ChunkFile.open(object_content_filename, options)
         end
-      else # multipart 
+      else # multipart
         if dataset.include?('Content-Range') # multipart with Range
           Log.debug("response_get_object_by_chunk : request_id=#{request_id}: multipart with Range", 'blue')
           response.status = 206
@@ -119,7 +119,7 @@ module OssEmulator
         end
       end
 
-    end # function response_get_object_by_chunk 
+    end # function response_get_object_by_chunk
 
     # Response OK to various Request Method
     def self.response_ok(response, dataset={})
@@ -206,7 +206,7 @@ module OssEmulator
         response['ETag'] = dataset[:md5]
         response['Content-Length'] = dataset[:size]
         response['Last-Modified'] = Time.parse(dataset[:modified_date]).strftime("%a, %d %b %Y %H:%M:%S GMT")
-        response['x-oss-object-type'] = 'Normal' 
+        response['x-oss-object-type'] = 'Normal'
         response['x-oss-storage-class'] = 'Standard'
         response['x-oss-server-time'] = Time.now.strftime("%a, %d %b %Y %H:%M:%S GMT")
       when Request::POST_INIT_MULTIPART_UPLOAD
@@ -237,7 +237,7 @@ module OssEmulator
         output = ""
         xml = Builder::XmlMarkup.new(:target => output)
         xml.instruct! :xml, :version=>"1.0", :encoding=>"UTF-8"
-        xml.CopyObjectResult(:xmlns => HttpMsg::XMLNS) { |result|
+        xml.CopyObjectResult { |result|
           result.LastModified(dataset[:modified_date])
           result.ETag("\"#{dataset[:md5]}\"")
         }
@@ -288,7 +288,7 @@ module OssEmulator
       end #case
     end #function
 
-    # Response while request method is OPTIONS 
+    # Response while request method is OPTIONS
     def self.response_options(response)
       response['Access-Control-Allow-Origin']   = '*'
       response['Access-Control-Allow-Methods']  = 'PUT, POST, HEAD, GET, OPTIONS'
@@ -363,14 +363,14 @@ module OssEmulator
 
       return false
     end
- 
+
     # InvalidObjectName
     def self.response_invalid_object_name(response, object)
       object = object.force_encoding('UTF-8')
       if !OssUtil.valid_object_name(object)
         dataset = { object: object }.merge(ErrorCode::INVALID_OBJECT_NAME)
         OssResponse.response_error(response, dataset)
-        return true 
+        return true
       end
       return false
     end
