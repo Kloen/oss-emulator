@@ -1,13 +1,16 @@
 FROM ruby:3.3-alpine3.20
 
+ENV DOCKER_LOGS="true"
+
 WORKDIR /oss-emulator
 COPY bin bin
 COPY lib lib
+COPY entrypoint.sh entrypoint.sh
 
-RUN mkdir store log
+RUN mkdir store
 RUN gem install thor builder webrick
+RUN chmod +x /oss-emulator/entrypoint.sh
 
 EXPOSE 8880
-ENV DOCKER_LOGS="true"
 
-CMD ["ruby","/oss-emulator/bin/emulator", "-r", "store", "-p", "8880"]
+ENTRYPOINT ["/oss-emulator/entrypoint.sh"]
