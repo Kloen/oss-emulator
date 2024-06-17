@@ -28,3 +28,9 @@ jobs:
         with:
           push: true
           tags: kloen/oss-emulator:${{ github.event.inputs.tag }}
+
+      - name: Build and push
+        uses: docker/build-push-action@v5
+        with:
+          push: true
+          tags: kloen/oss-emulator:latest
